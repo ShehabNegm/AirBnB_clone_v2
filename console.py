@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+from datetime import datetime
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -137,17 +138,29 @@ class HBNBCommand(cmd.Cmd):
             key = key.strip()
             value = value.strip()
 
-        try:
-            if "." in value:
-                value = float(value)
-            else:
-                value = int(value)
-        except ValueError:
-            if value.startswith('"') and value.endswith('"'):
-                value = value[1:-1]
-            value = value.replace("\\\"", "\"")
+            try:
+                if "." in value:
+                    value = float(value)
+                else:
+                    value = int(value)
+            except ValueError:
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1]
+                value = value.replace("\\\"", "\"")
 
-        parameters_dict[key] = value
+            if isinstance(value, str):
+                value = value.replace('_', ' ')
+            
+            parameters_dict[key] = value
+        
+        current_time = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+        if 'created_at' not in parameters_dict:
+            parameters_dict['created_at'] = current_time
+        if 'updated_at' not in parameters_dict:
+            parameters_dict['updated_at'] = current_time
+
+        if '__class__' in parameters_dict:
+            del parameters_dict['__class__']
 
         new_instance = HBNBCommand.classes[class_name](**parameters_dict)
 
