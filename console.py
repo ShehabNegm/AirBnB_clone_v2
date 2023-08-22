@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+import shlex
 from datetime import datetime
 from models.base_model import BaseModel
 from models.__init__ import storage
@@ -120,7 +121,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
 
-        token = args.split()
+        token = shlex.split(args)
 
         class_name = token[0]
         parameters = token[1:]
@@ -128,45 +129,26 @@ class HBNBCommand(cmd.Cmd):
         if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        
-        parameters_dict = {}
-        for param in parameters:
-            if "=" not in param:
-                continue
 
-            key, value = param.split('=')
-            key = key.strip()
-            value = value.strip()
+        else:
+            instance = HBNBCommand.classes[class_name]()
+            for arg in parameters:
+                key = arg.split("=")[0]
+                value = arg.split("=")[1]
+                value.replace('_', ' ')
+                try:
+                    int(value)
+                except:
+                    pass
+                try:
+                    float(value)
+                except:
+                    pass
 
-            try:
-                if "." in value:
-                    value = float(value)
-                else:
-                    value = int(value)
-            except ValueError:
-                if value.startswith('"') and value.endswith('"'):
-                    value = value[1:-1]
-                value = value.replace("\\\"", "\"")
+                setattr(instance, key, value)
+            instance.save()
+            print(instance.id)
 
-            if isinstance(value, str):
-                value = value.replace('_', ' ')
-            
-            parameters_dict[key] = value
-        
-        current_time = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
-        if 'created_at' not in parameters_dict:
-            parameters_dict['created_at'] = current_time
-        if 'updated_at' not in parameters_dict:
-            parameters_dict['updated_at'] = current_time
-
-        if '__class__' in parameters_dict:
-            del parameters_dict['__class__']
-
-        new_instance = HBNBCommand.classes[class_name](**parameters_dict)
-
-        new_instance.save()
-        print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
