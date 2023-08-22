@@ -73,8 +73,7 @@ class HBNBCommand(cmd.Cmd):
             instance = HBNBCommand.classes[class_name]()
             for arg in parameters:
                 key = arg.split("=")[0]
-                value = arg.split("=")[1]
-                value.replace('_', ' ')
+                value = arg.split("=")[1].replace("_", " ")
                 try:
                     int(value)
                 except:
