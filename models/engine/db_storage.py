@@ -4,6 +4,14 @@
 from os import getenv
 from models.base_model import BaseModel, Base
 from sqlalchemy import create_engine, Session
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
 
 class DBStorage:
@@ -33,8 +41,8 @@ class DBStorage:
         if env == "test":
             Base.metadata.drop_all(self.__engine)
 
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        Session = sessionmaker(bind=self.__engine)
+        self.__session = Session()
 
     def all(self, cls=None):
         """return all the obj depending on cls"""
@@ -51,4 +59,28 @@ class DBStorage:
                 dict_r[key] = obj
 
         return dict_r
-            
+    
+    def new(self, obj):
+       """add object to the current session"""
+
+       if obj:
+           self.__session.add(obj)
+
+    def save(self):
+        """save the current session"""
+
+        self.__session.commit()
+
+    def delete(self, obj=None):
+        """delete from the current session"""
+
+        if obj:
+            self.__session.delete(obj)
+
+    def reload(self):
+        """ reload the objs from current database"""
+
+        Base.metadata.create_all(self.__engine)
+        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        Session = scoped_session(session_factory)
+        self.__session = Session()
