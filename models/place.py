@@ -5,6 +5,8 @@ from sqlalchemy import Column, String, Float, Integer
 from sqlalchemy import ForeignKey
 from models.city import City
 from models.user import User
+from os import getenv
+from sqlalchemy.orm import relationship
 
 
 class Place(BaseModel, Base):
@@ -21,3 +23,19 @@ class Place(BaseModel, Base):
     price_by_night = Column(Integer, nullable=False, default=0)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
+
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        reviews = relationship('Review', backref='place',
+                               cascade='all, delete-orphan')
+
+    else:
+        @porperty
+        def reviews(self):
+            """get reviews"""
+            rvw = models.storage.all(models.classes['Review']).values()
+            r_list = []
+            for i in rvw:
+                if i.place_id == self.id:
+                    r_list.append(i)
+            return r_list
+
