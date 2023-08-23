@@ -5,7 +5,9 @@ import sys
 import shlex
 from datetime import datetime
 from models.base_model import BaseModel
-from models.__init__ import storage
+import models
+from models.engine.db_storage import DBStorage
+from models.engine.file_storage import FileStorage
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -164,13 +166,13 @@ class HBNBCommand(cmd.Cmd):
         args = arg.split()
         instances = []
         if not args:
-            for value in storage.all().values():
+            for value in models.storage.all().values():
                 instances.append(str(value))
             print(instances)
 
         elif args[0] in self.classes:
             class_name = args[0]
-            for key, value in storage.all().items():
+            for key, value in models.storage.all().items():
                 if class_name in key:
                     instances.append(str(value))
             print(instances)
