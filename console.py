@@ -35,7 +35,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_quit(self, command):
         """ Method to exit the HBNB console"""
-        exit()
+        return True
 
     def help_quit(self):
         """ Prints the help documentation for quit  """
@@ -44,7 +44,7 @@ class HBNBCommand(cmd.Cmd):
     def do_EOF(self, arg):
         """ Handles EOF to exit program """
         print()
-        exit()
+        return True
 
     def help_EOF(self):
         """ Prints the help documentation for EOF """
@@ -159,23 +159,24 @@ class HBNBCommand(cmd.Cmd):
         print("Destroys an individual instance of a class")
         print("[Usage]: destroy <className> <objectId>\n")
 
-    def do_all(self, args):
+    def do_all(self, arg):
         """ Shows all objects, or all objects of a class"""
-        print_list = []
+        args = arg.split()
+        instances = []
+        if not args:
+            for value in storage.all().values():
+                instances.append(str(value))
+            print(instances)
 
-        if args:
-            args = args.split(' ')[0]  # remove possible trailing args
-            if args not in HBNBCommand.classes:
-                print("** class doesn't exist **")
-                return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+        elif args[0] in self.classes:
+            class_name = args[0]
+            for key, value in storage.all().items():
+                if class_name in key:
+                    instances.append(str(value))
+            print(instances)
+
         else:
-            for k, v in storage._FileStorage__objects.items():
-                print_list.append(str(v))
-
-        print(print_list)
+            print("** class doesn't exist **")
 
     def help_all(self):
         """ Help information for the all command """
