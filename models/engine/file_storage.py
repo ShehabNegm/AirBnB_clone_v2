@@ -19,13 +19,13 @@ class FileStorage:
         """Returns a dictionary of models currently in storage based on cls"""
 
         if cls is None:
-            return FileStorage.__objects
+            return self.__objects
 
         else:
             temp_dict = {}
-            for k in FileStorage.__objects.keys():
+            for k in self.__objects.keys():
                 if cls.__name__ in k:
-                    temp_dict[k] = FileStorage.__objects[k]
+                    temp_dict[k] = self.__objects[k]
         return temp_dict
 
     def new(self, obj):
