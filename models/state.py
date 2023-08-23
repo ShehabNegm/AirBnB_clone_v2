@@ -18,7 +18,7 @@ class State(BaseModel, Base):
 
     if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
-        cities(self):
+        def cities(self):
             """get list of the cities along with state ID"""
 
             cities = storage.all(City).values()
