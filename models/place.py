@@ -33,16 +33,15 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     amenity_ids = []
 
-    if getenv('HBNB_TYPE_STORAGE') == 'db':
+    if getenv("HBNB_TYPE_STORAGE") == 'db':
         reviews = relationship('Review', backref='place',
                                cascade='all, delete-orphan')
         amenities = relationship('Amenity',
                                  secondary=place_amenity,
                                  back_populates="place_amenities",
                                  viewonly=False)
-
     else:
-        @porperty
+        @property
         def reviews(self):
             """get reviews"""
             rvw = models.storage.all(models.classes['Review']).values()
@@ -55,12 +54,7 @@ class Place(BaseModel, Base):
         @property
         def amenities(self):
             """get aminities"""
-            amn = models.storage.all(models.classes['Amenity']).values()
-            a_list = []
-            for i in amn:
-                if i.id in self.amenity_ids:
-                    a_list.append(i)
-            return a_list
+            return self.amenity_ids
 
         @amenities.setter
         def amenities(self, obj):
