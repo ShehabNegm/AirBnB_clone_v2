@@ -45,17 +45,20 @@ class FileStorage:
     def reload(self):
         """Loads storage dictionary from file"""
 
-        filename = FileStorage.__file_path
-        if not os.path.isfile(filename):
-            pass
+       classes = {
+                    'BaseModel': BaseModel, 'User': User, 'Place': Place,
+                    'State': State, 'City': City, 'Amenity': Amenity,
+                    'Review': Review
+                  }
+        try:
+            temp = {}
+            with open(FileStorage.__file_path, 'r') as f:
+                temp = json.load(f)
+                for key, val in temp.items():
+                    self.all()[key] = classes[val['__class__']](**val)
 
-        else:
-            with open(filename, 'r') as f:
-                r_dict = json.load(f)
-                for v in r_dict.values():
-                    class_name = v["__class__"]
-                    del v["__class__"]
-                    self.new(eval(class_name)(**v)) 
+        except FileNotFoundError:
+            pass 
 
     def delete(self, obj=None):
         """delete obj from dict"""
