@@ -16,10 +16,5 @@ if getenv("HBNB_TYPE_STORAGE") == "db":
 
 else:
     from models.engine.file_storage import FileStorage
-    classes = {"User": User, "BaseModel": BaseModel,
-               "Place": Place, "State": State,
-               "City": City, "Amenity": Amenity,
-               "Review": Review}
-
     storage = FileStorage()
     storage.reload()

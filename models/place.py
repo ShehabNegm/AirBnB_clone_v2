@@ -8,6 +8,7 @@ from models.user import User
 from os import getenv
 from sqlalchemy.orm import relationship
 from sqlalchemy import Table
+import models
 
 
 place_amenity = Table('place_amenity', Base.metadata,
@@ -33,7 +34,8 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     amenity_ids = []
 
-    if getenv("HBNB_TYPE_STORAGE") == 'db':
+    if getenv("HBNB_TYPE_STORAGE") == "db":
+
         reviews = relationship('Review', backref='place',
                                cascade='all, delete-orphan')
         amenities = relationship('Amenity',
@@ -44,7 +46,7 @@ class Place(BaseModel, Base):
         @property
         def reviews(self):
             """get reviews"""
-            rvw = models.storage.all(models.classes['Review']).values()
+            rvw = models.storage.all(Review).values()
             r_list = []
             for i in rvw:
                 if i.place_id == self.id:
@@ -57,9 +59,7 @@ class Place(BaseModel, Base):
             return self.amenity_ids
 
         @amenities.setter
-        def amenities(self, obj):
+        def amenities(self, obj=None):
             """set amenities"""
             if type(obj) is Amenity and obj.id not in self.amenity_ids:
                 self.amenity_ids.append(obj.id)
-
-

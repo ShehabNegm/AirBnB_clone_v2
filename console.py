@@ -27,12 +27,6 @@ class HBNBCommand(cmd.Cmd):
                'State': State, 'City': City, 'Amenity': Amenity,
                'Review': Review
               }
-    dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
-    types = {
-             'number_rooms': int, 'number_bathrooms': int,
-             'max_guest': int, 'price_by_night': int,
-             'latitude': float, 'longitude': float
-            }
 
 
     def do_quit(self, command):
@@ -163,14 +157,16 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, arg):
         """ Shows all objects, or all objects of a class"""
+
         args = arg.split()
         instances = []
+        models.storage.reload()
         if not args:
             for value in models.storage.all().values():
                 instances.append(str(value))
             print(instances)
 
-        elif args[0] in self.classes:
+        elif args[0] in HBNBCommand.classes:
             class_name = args[0]
             for key, value in models.storage.all().items():
                 if class_name in key:
