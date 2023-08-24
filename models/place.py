@@ -7,6 +7,14 @@ from models.city import City
 from models.user import User
 from os import getenv
 from sqlalchemy.orm import relationship
+from sqlalchemy import Table
+
+
+place_amenity = Table('place_amenity', Base.metadata,
+                      Column('place_id', String(60), ForeignKey('places.id'),
+                             primary_key=True, nullable=False),
+                      Column('amenity_id', String(60), ForeignKey('amenities.id'),
+                             primary_key=True, nullable=False))
 
 
 class Place(BaseModel, Base):
@@ -23,10 +31,15 @@ class Place(BaseModel, Base):
     price_by_night = Column(Integer, nullable=False, default=0)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
+    amenity_ids = []
 
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         reviews = relationship('Review', backref='place',
                                cascade='all, delete-orphan')
+        amenities = relationship('Amenity',
+                                 secondary=place_amenity,
+                                 back_populates="place_amenities",
+                                 viewonly=False)
 
     else:
         @porperty
@@ -38,4 +51,21 @@ class Place(BaseModel, Base):
                 if i.place_id == self.id:
                     r_list.append(i)
             return r_list
+
+        @property
+        def amenities(self):
+            """get aminities"""
+            amn = models.storage.all(models.classes['Amenity']).values()
+            a_list = []
+            for i in amn:
+                if i.id in self.amenity_ids:
+                    a_list.append(i)
+            return a_list
+
+        @amenities.setter
+        def amenities(self, obj):
+            """set amenities"""
+            if type(obj) is Amenity:
+                self.amenity_ids.append(obj.id)
+
 
