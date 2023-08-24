@@ -10,7 +10,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Table
 import models
 from models.amenity import Amenity
-from models.reviewimport Review
+from models.review import Review
 
 place_amenity = Table('place_amenity', Base.metadata,
                       Column('place_id', String(60), ForeignKey('places.id'),
@@ -67,5 +67,5 @@ class Place(BaseModel, Base):
         @amenities.setter
         def amenities(self, obj=None):
             """set amenities"""
-            if type(obj) == Amenity:
+            if isinstance(obj, Amenity):
                 self.amenity_ids.append(obj.id)
