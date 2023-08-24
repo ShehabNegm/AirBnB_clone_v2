@@ -45,7 +45,7 @@ class FileStorage:
     def reload(self):
         """Loads storage dictionary from file"""
 
-       classes = {
+        classes = {
                     'BaseModel': BaseModel, 'User': User, 'Place': Place,
                     'State': State, 'City': City, 'Amenity': Amenity,
                     'Review': Review
