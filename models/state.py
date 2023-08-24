@@ -20,7 +20,7 @@ class State(BaseModel, Base):
         def cities(self):
             """get list of the cities along with state ID"""
 
-            c = models.storage.all(City).values()
+            c = models.storage.all(models.classes['City']).values()
             c_list = []
             for i in c:
                 if i.state_id == self.id:
