@@ -9,7 +9,8 @@ from os import getenv
 from sqlalchemy.orm import relationship
 from sqlalchemy import Table
 import models
-
+from models.amenity import Amenity
+from models.review import Review
 
 place_amenity = Table('place_amenity', Base.metadata,
                       Column('place_id', String(60), ForeignKey('places.id'),
@@ -46,7 +47,7 @@ class Place(BaseModel, Base):
         @property
         def reviews(self):
             """get reviews"""
-            rvw = models.storage.all(Review).values()
+            rvw = list(models.storage.all(Review).values())
             r_list = []
             for i in rvw:
                 if i.place_id == self.id:
@@ -56,10 +57,15 @@ class Place(BaseModel, Base):
         @property
         def amenities(self):
             """get aminities"""
-            return self.amenity_ids
+            amen = list(models.storage.all(Review).values())
+            A_list = []
+            for j in amen:
+                if j.id in self.amenity_ids:
+                    A_list.append(j)
+            return A_list
 
         @amenities.setter
         def amenities(self, obj=None):
             """set amenities"""
-            if type(obj) is Amenity and obj.id not in self.amenity_ids:
+            if isinstance(obj, Amenity):
                 self.amenity_ids.append(obj.id)
