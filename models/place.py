@@ -9,8 +9,6 @@ from os import getenv
 from sqlalchemy.orm import relationship
 from sqlalchemy import Table
 import models
-from models.amenity import Amenity
-from models.review import Review
 
 place_amenity = Table('place_amenity', Base.metadata,
                       Column('place_id', String(60), ForeignKey('places.id'),
