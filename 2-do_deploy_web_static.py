@@ -13,6 +13,17 @@ env.user = 'ubuntu'
 env.key_filename = '~/.ssh/school'
 
 
+def do_pack():
+    """function to make .tgz archive using fabric"""
+
+    nw = datetime.now().strftime("%Y%m%d%H%M%S")
+    ar_name = "web_static_" + nw + ".tgz"
+    local("mkdir -p versions")
+    local("tar -cvzf versions/{} web_static".format(ar_name))
+    size = os.stat("versions/{}".format(ar_name)).st_size
+    print("web_static packed: versions/{} -> {}".format(ar_name, size))
+
+
 def do_deploy(archive_path):
     """function to distribute archive to web servers"""
 
