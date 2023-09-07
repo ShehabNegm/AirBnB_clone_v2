@@ -20,20 +20,30 @@ def do_deploy(archive_path):
         return False
 
     try:
-        put(archive_path, '/tmp/')
+        if put(archive_path, '/tmp/').failed is True:
+            return False
         name = archive_path[9:-4]
         t_name = name + ".tgz"
-        run("mkdir -p /data/web_static/releases/{}".format(name))
-        run("tar -xzf /tmp/{} -C /data/web_static/releases/{}"
-            .format(t_name, name))
-        run("rm /tmp/{}".format(t_name))
-        run("mv /data/web_static/releases/{}/web_static/*\
-            /data/web_static/releases/{}".format(name, name))
-        run("rm -rf /data/web_static/releases/{}/web_static"
-            .format(name))
-        run("rm -rf /data/web_static/current")
-        run("ln -s /data/web_static/releases/{} /data/web_static/current"
-            .format(name))
+        if run("mkdir -p /data/web_static/releases/{}"
+               .format(name)).failed is True:
+            return False
+        if run("tar -xzf /tmp/{} -C /data/web_static/releases/{}"
+               .format(t_name, name)).failed is True:
+            return False
+        if run("rm /tmp/{}".format(t_name)).failed is True:
+            return False
+        if run("mv /data/web_static/releases/{}/web_static/*\
+            /data/web_static/releases/{}"
+               .format(name, name)).failed is True:
+            return False
+        if run("rm -rf /data/web_static/releases/{}/web_static"
+               .format(name)).failed is True:
+            return False
+        if run("rm -rf /data/web_static/current").failed is True:
+            return False
+        if run("ln -s /data/web_static/releases/{} /data/web_static/current"
+               .format(name)).failed is True:
+            return False
         print("New version deployed")
         return True
     except BaseException:
