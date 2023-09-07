@@ -13,7 +13,9 @@ def do_pack():
 
     nw = datetime.now().strftime("%Y%m%d%H%M%S")
     ar_name = "web_static_" + nw + ".tgz"
-    local("mkdir -p versions")
-    local("tar -cvzf versions/{} web_static".format(ar_name))
-    size = os.stat("versions/{}".format(ar_name)).st_size
-    print("web_static packed: versions/{} -> {}".format(ar_name, size))
+    try:
+        local("mkdir -p versions")
+        local("tar -cvzf versions/{} web_static".format(ar_name))
+        return "/versions/{}".format(ar_name)
+    except BaseException:
+        return None
