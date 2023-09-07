@@ -14,11 +14,6 @@ env.key_filename = '~/.ssh/school'
 env.abort_exception = FabricException
 
 
-class FabricException(Exception):
-    """class to frabic"""
-    pass
-
-
 def do_deploy(archive_path):
     """function to distribute archive to web servers"""
 
