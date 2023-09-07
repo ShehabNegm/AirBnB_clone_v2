@@ -11,6 +11,11 @@ import os
 env.hosts = ['3.83.253.154', '52.91.133.125']
 env.user = 'ubuntu'
 env.key_filename = '~/.ssh/school'
+env.abort_exception = FabricException
+
+
+class FabricException(Exception):
+    pass
 
 
 def do_deploy(archive_path):
@@ -36,5 +41,5 @@ def do_deploy(archive_path):
             .format(name))
         print("New version deployed")
         return True
-    except BaseException:
+    except FabricException:
         return False
