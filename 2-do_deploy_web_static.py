@@ -16,7 +16,7 @@ env.key_filename = '~/.ssh/school'
 def do_deploy(archive_path):
     """function to distribute archive to web servers"""
 
-    if not os.path.exists(archive_path):
+    if os.path.exists(archive_path) is False:
         return False
 
     try:
@@ -32,9 +32,8 @@ def do_deploy(archive_path):
         run("rm -rf /data/web_static/releases/{}/web_static"
             .format(name))
         run("rm -rf /data/web_static/current")
-        run("ln -sf /data/web_static/releases/{} /data/web_static/current"
+        run("ln -nsf /data/web_static/releases/{} /data/web_static/current"
             .format(name))
-        print("New version deployed")
         return True
     except BaseException:
         return False
