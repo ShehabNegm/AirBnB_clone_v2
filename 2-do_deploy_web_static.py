@@ -15,6 +15,7 @@ env.abort_exception = FabricException
 
 
 class FabricException(Exception):
+    """class to frabic"""
     pass
 
 
