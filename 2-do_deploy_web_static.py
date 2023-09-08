@@ -13,19 +13,6 @@ env.user = 'ubuntu'
 env.key_filename = '~/.ssh/school'
 
 
-def do_pack():
-    """function to make .tgz archive using fabric"""
-
-    nw = datetime.now().strftime("%Y%m%d%H%M%S")
-    ar_name = "web_static_" + nw + ".tgz"
-    try:
-        local("mkdir -p versions")
-        local("tar -cvzf versions/{} web_static".format(ar_name))
-        return "/versions/{}".format(ar_name)
-    except BaseException:
-        return None
-
-
 def do_deploy(archive_path):
     """function to distribute archive to web servers"""
 
@@ -48,5 +35,5 @@ def do_deploy(archive_path):
         run("ln -nsf /data/web_static/releases/{} /data/web_static/current"
             .format(name))
         return True
-    except BaseException:
+    except Exception:
         return False
