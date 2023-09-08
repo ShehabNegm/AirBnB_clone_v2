@@ -4,7 +4,7 @@ fabric script that creates and distributes
 an archive to the web servers
 """
 from datetime import datetime
-from fabric.api import local, run, put
+from fabric.api import local, run, put, env
 import os
 
 env.hosts = ['3.83.253.154', '52.91.133.125']
@@ -46,6 +46,7 @@ def do_deploy(archive_path):
         run("rm -rf /data/web_static/current")
         run("ln -nsf /data/web_static/releases/{} /data/web_static/current"
             .format(name))
+        print("New version deployed!")
         return True
     except Exception:
         return False
@@ -54,8 +55,7 @@ def do_deploy(archive_path):
 def deploy():
     """function to make archive and deploy"""
 
-    try:
-        path = do_pack()
-    except Exception:
+    path = do_pack()
+    if path is None:
         return False
-    do_deploy(path)
+    return do_deploy(path)
