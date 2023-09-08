@@ -16,6 +16,6 @@ def do_pack():
     try:
         local("mkdir -p versions")
         local("tar -cvzf versions/{} web_static".format(ar_name))
-        return "/versions/{}".format(ar_name)
+        return "versions/{}".format(ar_name)
     except BaseException:
         return None

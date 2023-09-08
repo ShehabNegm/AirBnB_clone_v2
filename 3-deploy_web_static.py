@@ -20,7 +20,7 @@ def do_pack():
     try:
         local("mkdir -p versions")
         local("tar -cvzf versions/{} web_static".format(ar_name))
-        return "/versions/{}".format(ar_name)
+        return "versions/{}".format(ar_name)
     except BaseException:
         return None
 
@@ -58,4 +58,5 @@ def deploy():
     path = do_pack()
     if path is None:
         return False
+    return do_deploy(path)
     return do_deploy(path)
