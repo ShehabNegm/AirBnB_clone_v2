@@ -19,7 +19,7 @@ class FileStorage:
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage based on cls"""
 
-        if cls == None:
+        if cls is None:
             return self.__objects
 
         else:
@@ -58,7 +58,7 @@ class FileStorage:
                     self.all()[key] = classes[val['__class__']](**val)
 
         except FileNotFoundError:
-            pass 
+            pass
 
     def delete(self, obj=None):
         """delete obj from dict"""
