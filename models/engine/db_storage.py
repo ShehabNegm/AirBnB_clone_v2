@@ -6,6 +6,7 @@ from models.base_model import BaseModel, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
 from models.user import User
 from models.state import State
 from models.city import City
@@ -26,8 +27,7 @@ class DBStorage:
         psswrd = getenv('HBNB_MYSQL_PWD')
         host = getenv('HBNB_MYSQL_HOST')
         db = getenv('HBNB_MYSQL_DB')
-        env =getenv('HBNB_ENV')
-
+        env = getenv('HBNB_ENV')
 
         self.__engine = create_engine(
             'mysql+mysqldb://{}:{}@{}/{}'.format
@@ -48,7 +48,7 @@ class DBStorage:
         """return all the obj depending on cls"""
 
         dict_r = {}
-        if cls == None:
+        if cls is None:
             for cl in Base.__subclasses__():
                 for obj in self.__session.query(cl).all():
                     key = obj.__class__.__name__ + "." + obj.id
@@ -59,14 +59,14 @@ class DBStorage:
                 dict_r[key] = obj
 
         return dict_r
-    
-    def new(self, obj):
-       """add object to the current session"""
 
-       if obj:
+    def new(self, obj):
+        """add object to the current session"""
+
+        if obj:
             try:
                 self.__session.add(obj)
-            except:
+            except SQLAlchemyError:
                 pass
 
     def save(self):
@@ -85,6 +85,11 @@ class DBStorage:
         from models.base_model import Base
 
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
         Session = scoped_session(session_factory)
         self.__session = Session()
+
+    def close(self):
+        """close current session"""
+        self.__session.close()
